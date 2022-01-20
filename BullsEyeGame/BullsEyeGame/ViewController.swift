@@ -20,7 +20,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        startNewRound()
+        startOver()
     }
     
     func startNewRound(){
@@ -29,6 +29,12 @@ class ViewController: UIViewController {
         currentValue = 50
         slider.value = Float (currentValue)
         updateLabels()
+    }
+    
+    @IBAction func startOver(){
+        round = 0
+        score = 0
+        startNewRound()
     }
     
     func updateLabels(){
@@ -41,30 +47,48 @@ class ViewController: UIViewController {
     @IBAction func showAlert(){
         
         let difference = abs (currentValue - targetValue)
-        let points = 100 - difference
+        var points = 100 - difference
+        
+        let title : String
+        if difference == 0 {
+            title = "Perfect!"
+            points += 100
+        } else if difference < 5 {
+            if(difference == 1){
+                points += 50
+            }
+            title = "You almost had it!"
+        } else if difference < 10 {
+            title = "Pretty good!"
+        } else {
+            title = "Not even close..."
+        }
         
         score += points
         
         let message = "You scored \(points) points"
         
         let alert = UIAlertController(
-            title: "Hello, World!",
+            title: title,
             message: message,
             preferredStyle: .alert)
         
         let action = UIAlertAction(
             title: "OK",
-            style: .default,
-            handler: nil)
+            style: .default) { _ in
+            // trailing closure (ultimo parametro es un closure, puedo omitir el nombre)
+            // handler: Que ocurre cuando oprimo el botón
+            self.startNewRound()
+            }
         
         alert.addAction(action)
         present(alert, animated: true, completion:nil)
-        
-        startNewRound()
     }
     
     @IBAction func sliderMoved(_ slider: UISlider){
         currentValue = lroundf(slider.value)
     }
+    
+
 }
 
